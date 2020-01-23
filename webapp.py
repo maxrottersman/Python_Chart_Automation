@@ -12,6 +12,8 @@ from pathlib import Path
 import plotly.graph_objects as go
 import plotly.express as px
 
+import flask
+
 # Where is our database, wherever we're running this?
 # and let's abstract with SQLAlchemy
 scriptPath = Path(__file__).parent
@@ -25,15 +27,29 @@ global db, df, groups
 db = create_engine(db_uri)
 
 # App's raw data
-df= pd.read_sql('Select [symbol],[close],[time] From Value_ByMinute_BTC',db)
+#sql = 'Select [symbol],[close],[time] From Value_ByMinute_BTC'
+# We want latest 15 prices but sorted ascending
+sql = 'Select [symbol],[time],[close] From ' \
+    '(select * from Value_ByMinute_BTC ' \
+     'ORDER BY [time] DESC limit 15) ORDER BY [symbol],[Time] ASC;'
+df= pd.read_sql(sql,db)
 # From that, create unique Managers for Drop Down
 groups = sorted(df['symbol'].unique())
 
 # Create our DASH app object!
-app = dash.Dash(__name__, external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'])
-
+#app = dash.Dash(__name__, external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'])
 # THIS IS FOR GUNICORN (in production server) TO HOOK INTO!
-server = app.server
+#server = app.server
+
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+server = flask.Flask(__name__) # define flask app.server
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, server=server) # call flask server
+
+# On server, will run in command in something like
+#gunicorn webapp:app.server -b 0.0.0.0 #:8000
+# to make run
+# sudo systemctl start gunicorn...
+
 
 
 #
@@ -74,14 +90,26 @@ def data_graph_draw(dropdown_value):
 style_cell_conditional=[
         {
             'if': {'column_id': c},
-            'textAlign': 'right'
+            'textAlign': 'left',
+            'width': '200px'
         } for c in ['close','time']
         ] + [
         {
             'if': {'column_id': 'symbol'},
             'display': 'none'
-        }
-    ]
+        } 
+        ] + [
+        {
+            'if': {'column_id': 'close'},
+            'textAlign': 'right',
+            'width': '200px'
+        } 
+        ] + [
+        {
+            'if': {'column_id': 'time'},
+            'width': '200px'
+        } 
+        ]
 style_data_conditional=[
         {
             'if': {'row_index': 'odd'},
@@ -98,10 +126,16 @@ style_header={
 #
 app.layout = html.Div([
     html.H1(children='Python automation charts using cryptocurrencies'),
-    dcc.Input(id='initialize_app_components_with_dummy_callback', value='', type='text', style={'display':'none'}),
-    dcc.Dropdown(id='group-dropdown'), 
+        # dumm y callback to get things initialized
+        dcc.Input(id='initialize_app_components_with_dummy_callback', value='', type='text', style={'display':'none'}),
+        # html.Div to keep Dropdown and 'Data Table' text on same line
+        html.Div([dcc.Dropdown(id='group-dropdown', value='BTC', style={'width': '100px', 'verticalAlign':'middle'}),
+        html.H3(children=' Table Data', style={'verticalAlign':'middle','display': 'inline-block'})
+        ]),
+        
     html.Br(),
     dash_table.DataTable(id='table-container',
+        style_table = {'width':'500px'},
         style_cell_conditional = style_cell_conditional,
         style_data_conditional = style_data_conditional,
         style_header = style_header),

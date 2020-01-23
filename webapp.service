@@ -1,0 +1,12 @@
+[Unit]
+Description=Dash from gunicorn
+After=network.target
+
+[Service]
+User=maxrottersman
+WorkingDirectory=/home/maxrottersman/python_chart_automation
+ExecStart=/home/maxrottersman/python_chart_automation/venv/bin/gunicorn -b 0.0.0.0:8000 -w 4 webapp:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
