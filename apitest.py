@@ -95,6 +95,9 @@ def insert_into_table(cur, record):
 
 
 if __name__ == '__main__':
+    pythonlog = open(str(ScriptPath)+"/pylog.txt", "a")
+    pythonlog.write(time.strftime("%m/%d/%Y"))
+
     record = get_coin_value_byMinute('BTC')
     cur = create_connection(dbPathandFile)
     insert_into_table(cur, record)
