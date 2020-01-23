@@ -72,7 +72,7 @@ if __name__ == "__main__":
 gunicorn --bind 0.0.0.0:5000 wsgi:app
 ```
 Could not reach on Internet, but "lynx localhost:5000" worked from 2nd terminal, so problem must be Google firewall.  
-Fix (though probably too broad, fix later)  Create fw rule Ingress, Allow, All Instances in the network, 0.0.0.0/0, Protocols and ports "Allow All"
+Fix (though probably too broad, improve later)  Create Google Cloud FW rule Ingress, Allow, All Instances in the network, 0.0.0.0/0, Protocols and ports "Allow All"
 
 ## Automation
 In Google VM Terminal, clicking on gear, top right, provides "upload" file option.  Other methods see: [transfer files](https://cloud.google.com/compute/docs/instances/transfer-files)
