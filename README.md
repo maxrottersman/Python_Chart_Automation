@@ -118,7 +118,10 @@ Instead:
 ```
 .open db_cryptocompare.sqlite
 Select * from Value_ByMinute_BTC; (DO NOT FORGET SEMI-COLON ; )
- ```
+```
+## DASH Web App
+NOTE:Flask is built into DASH!  So you don't need to import flask.
+However, Flask is for testing, single user, so for production, use gunicorn (or similar)
 
 
 MISC
