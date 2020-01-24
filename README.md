@@ -123,6 +123,9 @@ Select * from Value_ByMinute_BTC; (DO NOT FORGET SEMI-COLON ; )
 NOTE:Flask is built into DASH!  So you don't need to import flask.
 However, Flask is for testing, single user, so for production, use gunicorn (or similar)
 
+gunicorn -b 0.0.0.0:8000 webapp:server
+
+/etc/systemd/system/webapp.service
 Create webapp.service:
 ```[Unit]
 Description=Dash from gunicorn
@@ -131,7 +134,7 @@ After=network.target
 [Service]
 User=maxrottersman
 WorkingDirectory=/home/maxrottersman/python_chart_automation
-ExecStart=/home/maxrottersman/python_chart_automation/venv/bin/gunicorn -b 0.0.0.0:8000 -w 4 webapp:app
+ExecStart=/home/maxrottersman/python_chart_automation/venv/bin/gunicorn -b 0.0.0.0:8000 webapp:server
 Restart=always
 
 [Install]

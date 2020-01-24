@@ -42,8 +42,9 @@ groups = sorted(df['symbol'].unique())
 #server = app.server
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-server = flask.Flask(__name__) # define flask app.server
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets, server=server) # call flask server
+#server = flask.Flask(__name__) # define flask app.server
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets) # , server=server call flask server
+server = app.server
 
 # On server, will run in command in something like
 #gunicorn webapp:app.server -b 0.0.0.0 #:8000
