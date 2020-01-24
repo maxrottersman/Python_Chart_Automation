@@ -23,7 +23,7 @@ db_uri = r'sqlite:///' + str(dbPathFile)
 
 # Connect to our db from SQLAlchemy
 # playing safe, making these global
-global db, df, groups
+#global db, df, groups
 db = create_engine(db_uri)
 
 # App's raw data
@@ -50,8 +50,6 @@ server = app.server
 #gunicorn webapp:app.server -b 0.0.0.0 #:8000
 # to make run
 # sudo systemctl start gunicorn...
-
-
 
 #
 # Part 1: DATA FUNCTIONS
@@ -181,5 +179,4 @@ def gen_graph(dropdown_value):
 if __name__ == '__main__':
     # Can this ever work instead of dummy callback?
     #app.callback(Output('mgr-dropdown', 'options')) (mgr_options_build())
-    
     app.run_server(debug=True)
