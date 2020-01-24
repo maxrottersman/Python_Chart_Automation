@@ -141,6 +141,18 @@ WantedBy=multi-user.target
 Put in: /etc/systemd/system/webapp.service
 To run:
 sudo systemctl start webapp
+Logs:
+journalctl -u webapp
+see: [flask as service](https://blog.miguelgrinberg.com/post/running-a-flask-application-as-a-service-with-systemd)
+Config [.system](https://serverfault.com/questions/821575/systemd-run-a-python-script-at-startup-virtualenv) for service start
+
+## Learning systemctl / service on Ubuntu
+In WSL: sudo apt-get install apache2
+sudo service apache2 start
+testwith "localhost" in browser, Apache page came up
+sudo service apache2 stop
+
+
 
 MISC
 
