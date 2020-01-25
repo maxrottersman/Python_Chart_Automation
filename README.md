@@ -42,6 +42,7 @@ venv/*
 
 - mkdir ~/python_chart_automation
 - cd python_chart_automation
+- mkdir db
 - python3 -m venv venv
 - source venv/bin/activate
 
@@ -104,6 +105,34 @@ sudo service cron start
 sudo chmod 775 db
 sudo chmod 664 db/db_cryptocompare.sqlite
 ```
+```
+SHELL=/usr/bin/bash
+#Path=/home/maxrottersman/python_chart_automation/venv/bin:/home/maxrottersman/python_chart_automation:$PATH
+PYTHONPATH=/home/maxrottersman/python_chart_automation/venv/bin/python
+DIR_PROJ = "cd ~/python_chart_automation"
+VENV = "source /home/maxrottersman/python_chart_automation/venv/bin/activate"
+CMD = "~/python_chart_automation/crontab_pytest.py"
+MAILTO=""
+
+# Tested, worked
+#* * * * * echo "crontab work" > ~/python_chart_automation/testcron.txt
+# Tested, worked
+#* * * * * $VENV && python -V > ~/python_chart_automation/logpyver2.txt
+#* * * * * $VENV && python ~/python_chart_automation/crontab_pytest.py
+
+#* * * * * bash /home/maxrottersman/python_chart_automation/pyscript.sh
+
+# working
+#* * * * * python /home/maxrottersman/python_chart_automation/crontab_pytest.py
+# Did NOT work
+#* * * * * source /home/maxrottersman/python_chart_automation/venv/bin/activate && python /home/maxrottersman/pytho$
+# Works
+#* * * * * /home/maxrottersman/python_chart_automation/venv/bin/python /home/maxrottersman/python_chart_automation/$
+
+#
+* * * * * /home/maxrottersman/python_chart_automation/venv/bin/python /home/maxrottersman/python_chart_automation/a$
+```
+
 
 
 The following was not picking up the scripts true folder,
@@ -125,9 +154,12 @@ However, Flask is for testing, single user, so for production, use gunicorn (or 
 
 gunicorn -b 0.0.0.0:8000 webapp:server
 
+If gunicorn wn't let go: sudo fuser -k 8000/tcp
+
 /etc/systemd/system/webapp.service
 Create webapp.service:
-```[Unit]
+```
+[Unit]
 Description=Dash from gunicorn
 After=network.target
 

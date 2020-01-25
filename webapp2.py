@@ -4,12 +4,13 @@ import dash_core_components as dcc
 import dash_table as dash_table
 from dash.dependencies import Input, Output
 
+import sqlite3
 import pandas as pd
+
 from sqlalchemy import create_engine
 
 from pathlib import Path
 
-#import plotly.graph_objects as go
 import plotly.express as px
 
 # Where is our database, wherever we're running this?
@@ -22,7 +23,10 @@ db_uri = r'sqlite:///' + str(dbPathFile)
 # Connect to our db from SQLAlchemy
 # playing safe, making these global
 #global db, df, groups
-db = create_engine(db_uri)
+#db = create_engine(db_uri)
+
+#conn = sqlite3.connect('/home/maxrottersman/python_chart_automation/db_cryptocompare.sqlite')
+conn = sqlite3.connect(dbPathFile)
 
 # App's raw data
 #sql = 'Select [symbol],[close],[time] From Value_ByMinute_BTC'
@@ -30,18 +34,20 @@ db = create_engine(db_uri)
 sql = 'Select [symbol],[time],[close] From ' \
     '(select * from Value_ByMinute_BTC ' \
      'ORDER BY [time] DESC limit 15) ORDER BY [symbol],[Time] ASC;'
-df= pd.read_sql(sql,db)
+df= pd.read_sql(sql,conn)
 # From that, create unique Managers for Drop Down
 groups = sorted(df['symbol'].unique())
+
+conn.close()
 
 # Create our DASH app object!
 #app = dash.Dash(__name__, external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'])
 # THIS IS FOR GUNICORN (in production server) TO HOOK INTO!
 #server = app.server
-
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-#server = flask.Flask(__name__) # define flask app.server
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets) # , server=server call flask server
+app = dash.Dash(__name__, 
+    external_stylesheets=external_stylesheets,
+    suppress_callback_exceptions=True) # , server=server call flask server
 server = app.server
 
 # On server, will run in command in something like
@@ -121,7 +127,8 @@ style_header={
 #
 # PART 2, Create our clean DASH LAYOUT object
 #
-app.layout = html.Div([
+def generate_layout():
+    return html.Div([
     html.H1(children='Python automation charts using cryptocurrencies'),
         # dumm y callback to get things initialized
         dcc.Input(id='initialize_app_components_with_dummy_callback', value='', type='text', style={'display':'none'}),
@@ -137,8 +144,14 @@ app.layout = html.Div([
         style_data_conditional = style_data_conditional,
         style_header = style_header),
     html.H3(children='Cryptocurrenty Prices by Minute'),
-    dcc.Graph(id='graph-container')
+    dcc.Graph(id='graph-container'),
+    dcc.Interval(id='invterval-component',
+        interval=10*1000,
+        n_intervals=0) # 60 seconds, set counter to 0
 ])
+
+suppress_callback_exceptions=True
+app.layout = generate_layout
 #
 # PART 2, Load Initial DROPDOWN LIST DATA in our DASH layout which
 # will happen after the app is run.
@@ -168,6 +181,14 @@ def gen_table(dropdown_value):
     dash.dependencies.Output('graph-container', 'figure'),
     [dash.dependencies.Input('group-dropdown', 'value')])
 def gen_graph(dropdown_value):
+    return data_graph_draw(dropdown_value)
+
+# Interval Callback, update every 60 seconds.
+@app.callback([Output('table-container', 'data2'), Output('table-container', 'columns2')],
+              [Input('interval-component', 'n_intervals')])
+def gen_table_after_interval(dropdown_value):
+    return data_table_populat(dropdown_value)
+def gen_graph_after_interval(dropdown_value):
     return data_graph_draw(dropdown_value)
 
 ###
