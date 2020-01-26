@@ -114,27 +114,16 @@ VENV = "source /home/maxrottersman/python_chart_automation/venv/bin/activate"
 CMD = "~/python_chart_automation/crontab_pytest.py"
 MAILTO=""
 
+# CURRENT PRODUCTION
+* * * * * /home/maxrottersman/python_chart_automation/venv/bin/python /home/maxrottersman/python_chart_automation/a$
 # Tested, worked
 #* * * * * echo "crontab work" > ~/python_chart_automation/testcron.txt
-# Tested, worked
 #* * * * * $VENV && python -V > ~/python_chart_automation/logpyver2.txt
 #* * * * * $VENV && python ~/python_chart_automation/crontab_pytest.py
-
-#* * * * * bash /home/maxrottersman/python_chart_automation/pyscript.sh
-
-# working
-#* * * * * python /home/maxrottersman/python_chart_automation/crontab_pytest.py
-# Did NOT work
-#* * * * * source /home/maxrottersman/python_chart_automation/venv/bin/activate && python /home/maxrottersman/pytho$
-# Works
 #* * * * * /home/maxrottersman/python_chart_automation/venv/bin/python /home/maxrottersman/python_chart_automation/$
 
-#
-* * * * * /home/maxrottersman/python_chart_automation/venv/bin/python /home/maxrottersman/python_chart_automation/a$
 ```
-
-
-
+## Paths Stinks!
 The following was not picking up the scripts true folder,
 but the one before.  Hours of pain until I figured it out.
 A virtual env issue my guess
@@ -142,6 +131,16 @@ from pathlib import Path
 ScriptPath = Path.cwd()
 Instead:
 ```ScriptPath = Path(__file__).parent```
+
+## Setting up crontab update of local Win SQLite through WSL Ubuntu
+NOTE: In WSL Window, Ctrl+Shift+C to copy (right mouse button click paste)
+o. Open WSL/Ubuntu on Windows
+o. Created /python_chart_automation
+o. Ran: Sqlite3
+o. Tested that WSL could access SQL db on win drive with: 
+.open /mnt/c/Files2020_Dev/ByProject/Python_Chart_Automation/db/db_cryptocompare.sqlite
+
+
 
 ## SQLite3
 ```
@@ -155,6 +154,7 @@ However, Flask is for testing, single user, so for production, use gunicorn (or 
 gunicorn -b 0.0.0.0:8000 webapp:server
 
 If gunicorn wn't let go: sudo fuser -k 8000/tcp
+also: pkill gunicorn 
 
 /etc/systemd/system/webapp.service
 Create webapp.service:
@@ -190,10 +190,8 @@ sudo service apache2 stop
 # SSH
 o. On Ubuntu: ssh-keygen
 o. google doesn't give real password to ubuntu instance (all through SSH) so do it the following way.
-o. create key anywhere (if above, copy down)
+o. create key
 o. On GC platform, go into instance, the "edit".  On that page scroll to user keys and add public key from text editor.  REMEMBER TO SAVE.  
 o. Then in Filezilla set up for key and browse for it, might have to do "all files" to see it.
 
-MISC
 
-- We want an SSH key which will allow our server to pull our code from github.  In practical terms, SSH keys are how we can have computers login to each other without going through a login/password process. [ssh info](https://www.ssh.com/ssh/keygen)

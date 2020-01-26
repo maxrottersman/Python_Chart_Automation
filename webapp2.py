@@ -84,6 +84,12 @@ def data_graph_draw(dropdown_value):
     fig = px.scatter(dff, x=dff['time'], y=dff.close)
     return fig
 
+def get_current_time():
+    """ Helper function to get the current time in seconds. """
+    now = dt.datetime.now()
+    total_time = (now.hour * 3600) + (now.minute * 60) + (now.second)
+    return total_time
+
 ##### END DATA FUNCTIONS #####
 #
 # STYLES
@@ -134,7 +140,8 @@ def generate_layout():
         dcc.Input(id='initialize_app_components_with_dummy_callback', value='', type='text', style={'display':'none'}),
         # html.Div to keep Dropdown and 'Data Table' text on same line
         html.Div([dcc.Dropdown(id='group-dropdown', value='BTC', style={'width': '100px', 'verticalAlign':'middle'}),
-        html.H3(children=' Table Data', style={'verticalAlign':'middle','display': 'inline-block'})
+        html.H3(children=' Table Data', style={'verticalAlign':'middle','display': 'inline-block'}),
+        html.A('Refresh', href='/')
         ]),
         
     html.Br(),

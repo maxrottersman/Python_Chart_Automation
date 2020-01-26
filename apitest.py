@@ -14,7 +14,7 @@ from sqlite3 import Error
 from pathlib import Path
 
 # assume script in root of our project
-ScriptPath = Path.cwd()
+ScriptPath = Path(__file__).parent
 # assume our database in folder /sqlite_db
 dbPath = ScriptPath / 'db'
 # get system neutral (win/unix) path and convert to string
@@ -31,7 +31,7 @@ conn = sqlite3.connect(str(dbPathandFile))
 def get_coin_value_byMinute(coin):
 
     res = cryptocompare.get_historical_price_minute(coin, curr='USD',limit=1)
-
+    print(res)
     TimeYYYYMMDDHHMM = dt.datetime.utcfromtimestamp(res['Data'][1]['time']).strftime("%Y %m %d H%H M%M")
 
     record = ([coin,
