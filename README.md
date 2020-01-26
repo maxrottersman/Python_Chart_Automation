@@ -187,7 +187,12 @@ sudo service apache2 start
 testwith "localhost" in browser, Apache page came up
 sudo service apache2 stop
 
-
+# SSH
+o. On Ubuntu: ssh-keygen
+o. google doesn't give real password to ubuntu instance (all through SSH) so do it the following way.
+o. create key anywhere (if above, copy down)
+o. On GC platform, go into instance, the "edit".  On that page scroll to user keys and add public key from text editor.  REMEMBER TO SAVE.  
+o. Then in Filezilla set up for key and browse for it, might have to do "all files" to see it.
 
 MISC
 
